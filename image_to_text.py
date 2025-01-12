@@ -4,7 +4,7 @@ from os.path import isfile, join
 from google.cloud import vision
 import os, io
 import pandas as pd
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'Authentication File Path' 
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'gen-lang-client-0845107144-6a7f58a13071.json' 
 client = vision.ImageAnnotatorClient() 
 image_path = r'image.png'
 

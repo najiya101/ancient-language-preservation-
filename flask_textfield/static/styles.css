@@ -1,0 +1,150 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc; /* Softer background */
+    margin: 0;
+    padding: 20px;
+    animation: fadeIn 1s; /* Animation for body */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 16px; /* More rounded corners */
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transform: translateY(-20px);
+    opacity: 0;
+    animation: slideIn 0.5s forwards; /* Slide in effect */
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+h1 {
+    color: #5c5e62;
+    margin-bottom: 20px;
+    font-size: 28px; /* Larger font size */
+    animation: bounce 1s infinite alternate; /* Bouncing effect */
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+.text-form {
+    display: flex;
+    flex-direction: column;  
+    gap: 20px; /* Increased gap for spacing */
+}
+
+input[type="text"] {
+    width: 93%; /* Full width */
+    padding: 14px; /* More padding */
+    border: 2px solid #d1d3e2; /* Slightly darker border */
+    border-radius: 10px; /* Rounded edges */
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-size: 16px; /* Larger text */
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Enhanced focus effect */
+}
+
+button {
+    padding: 14px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 10px; /* Rounded edges */
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added box-shadow */
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Hover shadow */
+}
+
+#deselectButton {
+    display: none;
+    margin-top: 10px;
+    padding: 14px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added box-shadow */
+}
+
+#deselectButton:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Hover shadow */
+}
+
+.result {
+    background-color: #f1f3f5; /* Softer background */
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    transition: transform 0.3s; /* Add transition for result */
+}
+
+.result:hover {
+    transform: scale(1.02); /* Slight scale effect on hover */
+}
+
+.image-display {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.image-display img {
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s; /* Smooth scaling */
+}
+
+.image-display img:hover {
+    transform: scale(1.05); /* Scale up on hover */
+}
+
+.message {
+    color: #007bff;
+    text-align: center;
+    margin: 10px 0;
+    font-size: 16px;
+    animation: fadeIn 0.5s; /* Fade in for message */
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #007bff; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite; /* Spin animation */
+    margin: 20px auto; /* Center the loader */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

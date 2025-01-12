@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HACKATHON</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e9ecef;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      h1 {
+        color: #343a40;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+
+      .drop-area {
+        border: 2px dashed #007bff;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin: 10px 0;
+        transition: background-color 0.3s;
+        cursor: pointer;
+      }
+
+      .drop-area.hover {
+        background-color: #e9ecef;
+      }
+
+      .message {
+        color: #007bff;
+        text-align: center;
+        margin: 10px 0;
+      }
+
+      .loader {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+        display: none;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          width: 90%;
+        }
+      }
+
+      .disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="header">B E R T - A I</h1>
+      <form method="post" class="text-form" enctype="multipart/form-data">
+        <input
+          type="text"
+          name="textfield"
+          placeholder="Enter sentences with [MASK] at missing parts:"
+          aria-label="Text input for sentences"
+        />
+        <h4>or</h4>
+        <div
+          class="drop-area"
+          id="drop-area"
+          aria-label="Drop area for image upload"
+          tabindex="0"
+        >
+          <p>
+            Drag & drop an image of the text here or click to select the image
+          </p>
+          <input
+            type="file"
+            name="imagefile"
+            accept="image/*"
+            id="fileElem"
+            style="display: none"
+            aria-label="File input for image upload"
+          />
+          <button
+            type="button"
+            id="fileSelect"
+            aria-label="Select image button"
+          >
+            Select Image
+          </button>
+        </div>
+        <div class="message" id="message"></div>
+        <button type="submit" id="submitButton">Submit</button>
+        <button type="button" id="deselectButton">Deselect Image</button>
+      </form>
+
+      <div class="loader" id="loader"></div>
+
+      {% if image_path %}
+      <div class="image-display">
+        <h2>Uploaded Image:</h2>
+        <img
+          src="{{ image_path }}"
+          alt="Uploaded Image"
+          style="max-width: 100%; height: auto"
+        />
+        <h2>Extracted Text:</h2>
+        <p>{{ detected_text }}</p>
+        <p>Image Path: {{ image_path }}</p>
+      </div>
+      {% endif %} {% if user_input %}
+      <div class="result">
+        <h2>Predicted Word is:</h2>
+        <p>{{ user_input }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      const dropArea = document.getElementById("drop-area");
+      const fileInput = document.getElementById("fileElem");
+      const messageDiv = document.getElementById("message");
+      const loader = document.getElementById("loader");
+      const submitButton = document.getElementById("submitButton");
+      const header = document.getElementById("header");
+      const deselectButton = document.getElementById("deselectButton");
+
+      dropArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dropArea.classList.add("hover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("hover");
+      });
+
+      dropArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dropArea.classList.remove("hover");
+        const files = event.dataTransfer.files;
+        if (files.length) {
+          fileInput.files = files;
+          displayMessage(files[0].name);
+          checkInputValidity();
+        }
+      });
+
+      dropArea.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      deselectButton.addEventListener("click", function () {
+        fileInput.value = ""; // Clear file input
+        messageDiv.textContent = ""; // Clear message
+        this.style.display = "none"; // Hide the deselect button
+      });
+
+      document
+        .getElementById("fileSelect")
+        .addEventListener("click", (event) => {
+          event.stopPropagation();
+          fileInput.click();
+        });
+
+      fileInput.addEventListener("change", (event) => {
+        if (event.target.files.length) {
+          displayMessage(event.target.files[0].name);
+          checkInputValidity();
+        }
+      });
+
+      function displayMessage(fileName) {
+        messageDiv.textContent = `Image selected: ${fileName}`;
+        deselectButton.style.display = "inline-block"; // Show the deselect button
+      }
+
+      function checkInputValidity() {
+        const textValue = document.querySelector(
+          'input[name="textfield"]'
+        ).value;
+        const fileCount = fileInput.files.length;
+      }
+
+      document
+        .querySelector(".text-form")
+        .addEventListener("submit", function (event) {
+          const textValue = document.querySelector(
+            'input[name="textfield"]'
+          ).value;
+          const fileCount = fileInput.files.length;
+
+          if (textValue && fileCount) {
+            alert("Please provide either text or an image, not both.");
+            event.preventDefault();
+            return;
+          }
+
+          loader.style.display = "block";
+          this.classList.add("disabled");
+        });
+
+      header.addEventListener("click", function () {
+        document.querySelector('input[name="textfield"]').value = "";
+        fileInput.value = "";
+        messageDiv.textContent = "";
+        loader.style.display = "none";
+        deselectButton.style.display = "none"; // Hide the deselect button
+      });
+    </script>
+  </body>
+</html>
