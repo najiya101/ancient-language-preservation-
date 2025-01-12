@@ -3,12 +3,13 @@ import os
 import io
 from google.cloud import vision
 import pandas as pd
+from deep_translator import GoogleTranslator
 
 app = Flask(__name__)
 # Configure upload folder for images
 app.config["UPLOAD_FOLDER"] = "static/uploads/"
 app.config["ALLOWED_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '' 
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = ''
 # Ensure the upload folder exists
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
@@ -28,9 +29,18 @@ def detect_text(image_path):
         return texts[0].description  # Return the first detected text
     else:
         return "No text detected."
+
+def translate_text(text):
+    try:
+        # Specify Sanskrit ('sa') as the source language and English ('en') as the target language
+        translated = GoogleTranslator(source='sa', target='en').translate(text)
+        return translated
+    except Exception as e:
+        return f"Error: {e}"
+
 @app.route("/", methods=["GET", "POST"])
 def index():
-    text = ""
+    in_text = ""
     image_url = None
 
     if request.method == "POST":
@@ -49,11 +59,11 @@ def index():
             
             # Detect text from the uploaded image
             text = detect_text(image_path)
-
+            translation = translate_text(text)
         # Render the template with text and image URL
-        return render_template("index.html", text=text, image_path=image_url)
+        return render_template("index.html",text=text, translation=translation, image_path=image_url)
 
-    return render_template("index.html", text=text, image_path=image_url)
+    return render_template("index.html", text=in_text,translation=translation)
 
 if __name__ == "__main__":
     app.run(debug=True)
