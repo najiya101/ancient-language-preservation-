@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Configure upload folder for images
 app.config["UPLOAD_FOLDER"] = "static/uploads/"
 app.config["ALLOWED_EXTENSIONS"] = {"png", "jpg", "jpeg", "gif"}
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'gen-lang-client-0845107144-6a7f58a13071.json' 
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '' 
 # Ensure the upload folder exists
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
