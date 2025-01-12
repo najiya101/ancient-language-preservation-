@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text and Image Upload</title>
+    <style>
+        /* Set a background image for the body */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/static/images/bgi.jpg'); /* Replace with your background image URL */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: rgb(255 255 255 / 84%);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            resize: none;
+            background-color: #f9f9f9;
+        }
+
+        .image-upload-box {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .image-upload-box input[type="file"] {
+            padding: 8px;
+            border-radius: 6px;
+            background-color: #fff;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .image-upload-box.dragover {
+            border-color: #88512f;
+            background-color: #e7e7e7;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 30px;
+            background-color: #88512f;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #915d3d;
+        }
+
+        .output-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f4f7fc;
+            text-align: center;
+        }
+
+        .output-box img {
+            max-width: 50%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .output-box p {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text and Image Upload</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <!-- Textbox for input text -->
+            <textarea name="text" rows="4" placeholder="Type your text here...">{{ text }}</textarea>
+            <br><br>
+            <span style="display: block; margin: 20px 0; font-size: 18px; text-align: center; color: #333;">or</span>
+
+            <!-- Div box for image upload with drag-and-drop functionality -->
+            <div class="image-upload-box" id="image-upload-box">
+                <label for="image-upload">Upload an image (or drag and drop here):</label><br><br>
+                <input type="file" name="image" accept="image/*" id="image-upload">
+                <br><br>
+
+                <!-- Display the uploaded image inside the div -->
+                {% if image_path %}
+                <div class="output-box">
+                    <h3>Uploaded Image:</h3>
+                    <img src="{{ image_path }}" alt="Uploaded Image" id="imIns">
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Display the entered text -->
+        {% if text %}
+        <div class="output-box">
+            <h3>Output:</h3>
+            <p>{{ text }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+     // Drag-and-Drop File Upload
+const imageUploadBox = document.getElementById('image-upload-box');
+const imageInput = document.getElementById('image-upload');
+const imageLabel = imageUploadBox.querySelector('label');
+
+// Allowed file extensions
+const allowedFile = (filename) => {
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+    const fileExtension = filename.split('.').pop().toLowerCase();
+    return allowedExtensions.includes(fileExtension);
+};
+
+// Handle drag over
+imageUploadBox.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    imageUploadBox.classList.add('dragover');
+});
+
+// Handle drag leave
+imageUploadBox.addEventListener('dragleave', () => {
+    imageUploadBox.classList.remove('dragover');
+});
+
+// Handle file drop
+imageUploadBox.addEventListener('drop', (event) => {
+    event.preventDefault();
+    imageUploadBox.classList.remove('dragover');
+
+    const file = event.dataTransfer.files[0];
+
+    if (file && allowedFile(file.name)) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file); // Add the file to DataTransfer
+        imageInput.files = dataTransfer.files; // Assign to the file input
+
+        // Update the label and preview
+        const fileReader = new FileReader();
+        fileReader.onload = () => {
+            // Update label
+            imageLabel.textContent = `Selected File: ${file.name}`;
+
+            // Display the image preview
+            const existingPreview = imageUploadBox.querySelector("img");
+            if (existingPreview) existingPreview.remove();
+
+            const previewImg = document.createElement("img");
+            previewImg.src = fileReader.result;
+            previewImg.style.maxWidth = "100%";
+            previewImg.style.marginTop = "15px";
+            imageUploadBox.appendChild(previewImg);
+        };
+        fileReader.readAsDataURL(file);
+    } else {
+        imageLabel.textContent = "Invalid file type. Please upload a valid image.";
+    }
+});
+
+
+    </script>
+    
+</body>
+</html>
