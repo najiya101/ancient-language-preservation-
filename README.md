@@ -13,9 +13,13 @@ This project aims to restore and preserve ancient Sanskrit texts by predicting m
 ### How It Works
 
 1️⃣ Upload an image of an ancient Sanskrit text
+
 2️⃣ The site extracts text from the image
+
 3️⃣ Add [MASK] in places where words are missing
+
 4️⃣ The model predicts the top possible words
+
 5️⃣ View the results and use them for text restoration
 
 ### Technologies Used
