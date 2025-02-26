@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Text and Image Upload</title>
     <style>
-      /* Set a background image for the body */
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
-        background-image: url("/static/images/bgi.jpg"); /* Replace with your background image URL */
+        background-image: url("/static/images/bgi.jpg");
         background-size: cover;
         background-position: center;
         color: #333;
@@ -102,30 +101,58 @@
         font-size: 16px;
         color: #333;
       }
+
+      .hide {
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Text and Image Upload</h1>
 
-      <form method="POST" enctype="multipart/form-data">
-        <!-- Textbox for input text -->
+      <!-- Text Form -->
+      <form method="POST" enctype="multipart/form-data" class="text-form">
         <textarea name="text" rows="4" placeholder="Type your text here...">
 {{ text }}</textarea
         >
-        <br /><br />
-        <span
-          style="
-            display: block;
-            margin: 20px 0;
-            font-size: 18px;
-            text-align: center;
-            color: #333;
-          "
-          >or</span
-        >
+        <br />
+        <button type="submit" id="textbutton" name="text_submit">
+          Submit Text</button
+        ><br />
+      </form>
+      <br />
 
-        <!-- Div box for image upload with drag-and-drop functionality -->
+      <!-- Display the entered text -->
+      {% if text %}
+      <div class="output-box">
+        <h3>Output:</h3>
+        <p>{{ text }}</p>
+        <h3>Translation:</h3>
+        <p>{{ translation }}</p>
+        <h3>Prediction:</h3>
+        <ul>
+          {% for key, value in prediction.items() %}
+          <li><strong>{{ key }}:</strong> {{ value }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% endif %}
+
+      <span
+        style="
+          display: block;
+          margin: 20px 0;
+          font-size: 18px;
+          text-align: center;
+          color: #333;
+        "
+        >or</span
+      >
+
+      <!-- Image Form -->
+      <form method="POST" enctype="multipart/form-data" class="image-form">
         <div class="image-upload-box" id="image-upload-box">
           <label for="image-upload"
             >Upload an image (or drag and drop here):</label
@@ -142,14 +169,13 @@
           {% endif %}
         </div>
 
-        <!-- Submit button -->
-        <button type="submit">Submit</button>
+        <button type="submit" name="image_submit">Submit Image</button>
       </form>
 
-      <!-- Display the entered text -->
-      {% if text %}
+      <!-- Display the output for image upload -->
+      {% if image_path %}
       <div class="output-box">
-        <h3>Output:</h3>
+        <h3>Detected Text:</h3>
         <p>{{ text }}</p>
         <h3>Translation:</h3>
         <p>{{ translation }}</p>
@@ -158,30 +184,25 @@
     </div>
 
     <script>
-      // Drag-and-Drop File Upload
       const imageUploadBox = document.getElementById("image-upload-box");
       const imageInput = document.getElementById("image-upload");
       const imageLabel = imageUploadBox.querySelector("label");
 
-      // Allowed file extensions
       const allowedFile = (filename) => {
         const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
         const fileExtension = filename.split(".").pop().toLowerCase();
         return allowedExtensions.includes(fileExtension);
       };
 
-      // Handle drag over
       imageUploadBox.addEventListener("dragover", (event) => {
         event.preventDefault();
         imageUploadBox.classList.add("dragover");
       });
 
-      // Handle drag leave
       imageUploadBox.addEventListener("dragleave", () => {
         imageUploadBox.classList.remove("dragover");
       });
 
-      // Handle file drop
       imageUploadBox.addEventListener("drop", (event) => {
         event.preventDefault();
         imageUploadBox.classList.remove("dragover");
@@ -190,16 +211,12 @@
 
         if (file && allowedFile(file.name)) {
           const dataTransfer = new DataTransfer();
-          dataTransfer.items.add(file); // Add the file to DataTransfer
-          imageInput.files = dataTransfer.files; // Assign to the file input
+          dataTransfer.items.add(file);
+          imageInput.files = dataTransfer.files;
 
-          // Update the label and preview
           const fileReader = new FileReader();
           fileReader.onload = () => {
-            // Update label
             imageLabel.textContent = `Selected File: ${file.name}`;
-
-            // Display the image preview
             const existingPreview = imageUploadBox.querySelector("img");
             if (existingPreview) existingPreview.remove();
 

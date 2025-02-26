@@ -1,0 +1,32 @@
+# Virtual environments
+myenv/
+wandb/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model files
+fine_tuned_indic_bert/
+*.h5
+*.pt
+*.ckpt
+
+# Data files
+*.csv
+*.json
+*.xlsx
+
+# Images
+*.png
+*.jpg
+*.jpeg
+
+# Logs and results
+results/
+logs/
+
+#credentials
+gen-lang-client-0845107144-e0701ecad2fa.json
